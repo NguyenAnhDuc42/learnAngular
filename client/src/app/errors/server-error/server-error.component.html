@@ -1,0 +1,9 @@
+<p>server-error works!</p>
+<p>internal server error</p>
+@if (error) {
+    <h5>error:{{error.message}}</h5>
+    <h5>if seing this its not Angular fault check network requesst</h5>
+    <code>
+        {{error.details}}
+    </code>
+}

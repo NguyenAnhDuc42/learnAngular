@@ -1,0 +1,17 @@
+<div>
+    <button (click)="get400error()" type="button" class="btn btn-primary" fdprocessedid="hox8d">400</button>
+    <button (click)="get401error()" type="button" class="btn btn-primary" fdprocessedid="hox8d">401</button>
+    <button (click)="get404error()" type="button" class="btn btn-primary" fdprocessedid="hox8d">404</button>
+    <button (click)="get500error()" type="button" class="btn btn-primary" fdprocessedid="hox8d">500</button>
+    <button (click)="get400Validationerror()" type="button" class="btn btn-primary" fdprocessedid="hox8d">400 Validation</button>
+
+    @if(validationErrors.length >0){
+        <div class="row mt-5">
+            <ul class="text-danger">
+                @for (error of validationErrors; track $index) {
+                    <li>{{error}}</li>
+                }
+            </ul>
+        </div>
+    }
+</div>  
