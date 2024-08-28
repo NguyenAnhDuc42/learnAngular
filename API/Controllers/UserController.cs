@@ -1,6 +1,8 @@
 using System;
 using API.Data;
+using API.DTOS;
 using API.Entities;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -13,27 +15,36 @@ namespace API.Controllers;
 // public class UserController : ControllerBase
 // now that created a BaseApiController to avoid reapeat code this inherit from it
 //                                  ||
-public class UserController : BaseApiController
+[Authorize]
+public class UserController(IUserRepository repo) : BaseApiController
 {
-    private readonly DataContext _context;
-    public UserController(DataContext context){
-        _context = context;
-    }
     [AllowAnonymous]
     [HttpGet] //need to be different every new method because the program
               //will not know which request to get (same Route)
-    public async Task<ActionResult<IEnumerable<AppUser>>>  AllUsers()
+    public async Task<ActionResult<IEnumerable<MemberDto>>>  AllUsers()
     {
-        var users = await _context.Users.ToListAsync();
+        var users = await repo.GetAllMemberAsync();
 
-        return users;
+        return Ok(users);
         //can return more(example:400 error)
     }
     [Authorize]
-    [HttpGet("{id:int}")] // ex:/api/user/2 
-    public async Task<ActionResult<AppUser>>  Getuser(int id)
+    [HttpGet("{username}")] // ex:/api/user/2 
+
+    // this is mapping
+    //  public async Task<ActionResult<MemberDto>>  Getuser(string username)
+    // {
+    //     var user = await repo.GetUserByNameAsync(username);
+    //     if(user == null) return NotFound();
+    //      MAPPING
+    //     return new MemberDto {   
+    //         Id = user.Id,
+    //         UserName = user.UserName,    
+    //     };
+    // }
+    public async Task<ActionResult<MemberDto>>  Getuser(string username)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await repo.GetMemberAsync(username);
         if(user == null) return NotFound();
         return user;
     }
