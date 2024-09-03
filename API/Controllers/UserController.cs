@@ -1,12 +1,10 @@
-using System;
-using API.Data;
+
+using System.Security.Claims;
 using API.DTOS;
-using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -16,7 +14,7 @@ namespace API.Controllers;
 // now that created a BaseApiController to avoid reapeat code this inherit from it
 //                                  ||
 [Authorize]
-public class UserController(IUserRepository repo) : BaseApiController
+public class UserController(IUserRepository repo,IMapper mapper) : BaseApiController
 {
     [AllowAnonymous]
     [HttpGet] //need to be different every new method because the program
@@ -47,5 +45,21 @@ public class UserController(IUserRepository repo) : BaseApiController
         var user = await repo.GetMemberAsync(username);
         if(user == null) return NotFound();
         return user;
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberdto){
+        var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if(username == null) return BadRequest("no username found in token");
+
+        var user = await repo.GetUserByNameAsync(username);
+
+        if(user == null) return BadRequest("could not find user");
+
+        mapper.Map(memberdto, user);
+
+        if(await repo.SaveAllAsync()) return NoContent();
+
+        return BadRequest("failed to update user");
     }
 }
