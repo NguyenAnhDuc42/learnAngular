@@ -1,0 +1,12 @@
+<div style="margin: 10px;" >
+    <label style="float: left;">{{label()}}</label>
+    <input 
+        [class.is-invalid]="control.invalid && control.touched"
+        [type]="type()"
+        class="form-control"
+        [formControl]="control"
+        placeholder={{label()}}>
+    <div *ngIf="control.hasError('required')" class="invalid-feedback text-start">pls enter a {{label()}}</div>
+    <div *ngIf="control.hasError('minlength')" class="invalid-feedback text-start">{{label()}} must be at least {{control.errors?.['minlength'].requiredLength}} character</div>
+    <div *ngIf="control.hasError('isMatching')" class="invalid-feedback text-start">{{label()}} doesnt match password</div>
+</div>

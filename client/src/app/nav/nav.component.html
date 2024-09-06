@@ -24,9 +24,10 @@
             
    
       @if (accountService.currentUser()) {
-        <div class="nav-item dropdown"  dropdown> 
-          <a class="nav-link dropdown-toggle show"  data-bs-toggle="dropdown" dropdownToggle>Welcome</a>
-          <div class="dropdown-menu" data-bs-popper="static" *dropdownMenu>
+        <div class="dropdown"  dropdown> 
+          <img src="{{accountService.currentUser()?.photoUrl || './assets/user.png'}}" alt="user main image">
+          <a class="dropdown-toggle text-light text-decoration-none" dropdownToggle>Welcome {{accountService.currentUser()?.username}}</a>
+          <div class="dropdown-menu" *dropdownMenu>
             <a routerLink="/member/edit" class="dropdown-item">Edit profile</a>
             <a class="dropdown-item" (click)="Logout()">Logout</a>
           </div>
