@@ -2,6 +2,7 @@
 using API.DTOS;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -20,12 +21,13 @@ public class UserController(IUserRepository repo,IMapper mapper,IPhotoService ph
     [AllowAnonymous]
     [HttpGet] //need to be different every new method because the program
               //will not know which request to get (same Route)
-    public async Task<ActionResult<IEnumerable<MemberDto>>>  AllUsers()
+    public async Task<ActionResult<IEnumerable<MemberDto>>>  AllUsers([FromQuery]UserParams userParams)
     {
-        var users = await repo.GetAllMemberAsync();
+        userParams.CurrentUserName = User.GetUsername();
+        var users = await repo.GetAllMemberAsync(userParams);
+        Response.AddPaginationHeader(users);
 
         return Ok(users);
-        //can return more(example:400 error)
     }
     [Authorize]
     [HttpGet("{username}")] // ex:/api/user/2 
